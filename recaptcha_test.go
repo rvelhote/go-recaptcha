@@ -26,8 +26,8 @@ import (
 )
 
 func TestRecaptcha_VerifyInvalid(t *testing.T) {
-    recaptcha := Recaptcha{ privateKey: "" }
-    success, errors := recaptcha.Verify("", "127.0.0.1")
+    recaptcha := Recaptcha{ PrivateKey: "6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe" }
+    success, errors := recaptcha.Verify("6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI", "127.0.0.1")
 
     if success == true {
         t.Error("Verification should have failed because it contains invalid random data!")
