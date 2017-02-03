@@ -41,10 +41,10 @@ var RecaptchaErrorMap = map[string] string {
 }
 
 type RecaptchaResponse struct {
-	success bool `json:"success"`
-	challenge string `json:"challenge_ts"`
-	hostname string `json:"hostname"`
-	errorCodes []string `json:"error-codes"`
+	Success bool `json:"success"`
+	Challenge string `json:"challenge_ts"`
+	Hostname string `json:"hostname"`
+	ErrorCodes []string `json:"error-codes"`
 }
 
 type Recaptcha struct {
@@ -68,10 +68,10 @@ func (r Recaptcha) Verify(response string, remoteip string) (bool, []error) {
     bufferedReader := bufio.NewReader(httpResponse.Body)
     json.NewDecoder(bufferedReader).Decode(&jsonResponse)
 
-    apiErrors := make([]error, len(jsonResponse.errorCodes))
-    for i, singleError := range jsonResponse.errorCodes {
+    apiErrors := make([]error, len(jsonResponse.ErrorCodes))
+    for i, singleError := range jsonResponse.ErrorCodes {
         apiErrors[i] = errors.New(RecaptchaErrorMap[singleError])
     }
 
-    return jsonResponse.success, apiErrors
+    return jsonResponse.Success, apiErrors
 }
