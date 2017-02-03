@@ -48,7 +48,7 @@ type RecaptchaResponse struct {
 }
 
 type Recaptcha struct {
-    privateKey string
+    PrivateKey string
 }
 
 func (r Recaptcha) Verify(response string, remoteip string) (bool, []error) {
