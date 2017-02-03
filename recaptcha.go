@@ -22,56 +22,56 @@
 package recaptcha
 
 import (
-    "net/http"
-    "net/url"
-    "net"
-    "time"
-    "bufio"
-    "encoding/json"
-    "errors"
+	"bufio"
+	"encoding/json"
+	"errors"
+	"net"
+	"net/http"
+	"net/url"
+	"time"
 )
 
 const VerifyUrl = "https://www.google.com/recaptcha/api/siteverify"
 
-var RecaptchaErrorMap = map[string] string {
-"missing-input-secret": "The secret parameter is missing.",
-"invalid-input-secret": "The secret parameter is invalid or malformed.",
-"missing-input-response": "The response parameter is missing.",
-"invalid-input-response": "The response parameter is invalid or malformed.",
+var RecaptchaErrorMap = map[string]string{
+	"missing-input-secret":   "The secret parameter is missing.",
+	"invalid-input-secret":   "The secret parameter is invalid or malformed.",
+	"missing-input-response": "The response parameter is missing.",
+	"invalid-input-response": "The response parameter is invalid or malformed.",
 }
 
 type RecaptchaResponse struct {
-	Success bool `json:"success"`
-	Challenge string `json:"challenge_ts"`
-	Hostname string `json:"hostname"`
+	Success    bool     `json:"success"`
+	Challenge  string   `json:"challenge_ts"`
+	Hostname   string   `json:"hostname"`
 	ErrorCodes []string `json:"error-codes"`
 }
 
 type Recaptcha struct {
-    PrivateKey string
+	PrivateKey string
 }
 
 func (r Recaptcha) Verify(response string, remoteip string) (bool, []error) {
-    params := url.Values{}
-    params.Set("secret", r.PrivateKey)
-    params.Set("response", response)
+	params := url.Values{}
+	params.Set("secret", r.PrivateKey)
+	params.Set("response", response)
 
-    if net.ParseIP(remoteip) != nil {
-        params.Set("remoteip", remoteip)
-    }
+	if net.ParseIP(remoteip) != nil {
+		params.Set("remoteip", remoteip)
+	}
 
-    jsonResponse := RecaptchaResponse{}
+	jsonResponse := RecaptchaResponse{}
 
-    httpClient := &http.Client{ Timeout: 10 * time.Second }
-    httpResponse, _ := httpClient.PostForm(VerifyUrl, params)
+	httpClient := &http.Client{Timeout: 10 * time.Second}
+	httpResponse, _ := httpClient.PostForm(VerifyUrl, params)
 
-    bufferedReader := bufio.NewReader(httpResponse.Body)
-    json.NewDecoder(bufferedReader).Decode(&jsonResponse)
+	bufferedReader := bufio.NewReader(httpResponse.Body)
+	json.NewDecoder(bufferedReader).Decode(&jsonResponse)
 
-    apiErrors := make([]error, len(jsonResponse.ErrorCodes))
-    for i, singleError := range jsonResponse.ErrorCodes {
-        apiErrors[i] = errors.New(RecaptchaErrorMap[singleError])
-    }
+	apiErrors := make([]error, len(jsonResponse.ErrorCodes))
+	for i, singleError := range jsonResponse.ErrorCodes {
+		apiErrors[i] = errors.New(RecaptchaErrorMap[singleError])
+	}
 
-    return jsonResponse.Success, apiErrors
+	return jsonResponse.Success, apiErrors
 }
