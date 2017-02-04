@@ -85,6 +85,8 @@ func (r Recaptcha) Verify(response string, remoteip string) (bool, []error) {
 	httpClient := &http.Client{Timeout: 10 * time.Second}
 	httpResponse, _ := httpClient.PostForm(siteVerifyURL, params)
 
+    defer httpResponse.Body.Close()
+
 	bufferedReader := bufio.NewReader(httpResponse.Body)
 	json.NewDecoder(bufferedReader).Decode(&jsonResponse)
 
