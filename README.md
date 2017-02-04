@@ -5,6 +5,8 @@ This is a Go package that allows you to verify user response of reCAPTCHA challe
 
 The package is only meant to help you with verifying the user's response with the API. It will not handle the form submission for you. That is up to you to deal with.
 
+If you never used reCAPTCHA and want to know how to set it up in your project I recommend that you visit the [official documentation](https://developers.google.com/recaptcha/intro).
+
 ## Installation
 Install this package as you would with any Go package by using `go get`.
 
