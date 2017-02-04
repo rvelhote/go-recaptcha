@@ -92,7 +92,9 @@ func (r Recaptcha) Verify(response string, remoteip string) (bool, []error) {
 
 	apiErrors := make([]error, len(jsonResponse.ErrorCodes))
 	for i, singleError := range jsonResponse.ErrorCodes {
-		apiErrors[i] = RecaptchaErrorMap[singleError]
+        if apiErrors[i] = errors.New(singleError); RecaptchaErrorMap[singleError] != nil {
+            apiErrors[i] = RecaptchaErrorMap[singleError]
+        }
 	}
 
 	return jsonResponse.Success, apiErrors
