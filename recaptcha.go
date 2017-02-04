@@ -31,8 +31,12 @@ import (
 	"time"
 )
 
+// The URL that's used to verify the user's response to the challenge.
+// @see https://developers.google.com/recaptcha/docs/verify#api-request
 const VerifyURL = "https://www.google.com/recaptcha/api/siteverify"
 
+// The list of error codes mapped to a human-readable error code.
+// @see https://developers.google.com/recaptcha/docs/verify#error-code-reference
 var RecaptchaErrorMap = map[string]string{
 	"missing-input-secret":   "The secret parameter is missing.",
 	"invalid-input-secret":   "The secret parameter is invalid or malformed.",
@@ -40,6 +44,8 @@ var RecaptchaErrorMap = map[string]string{
 	"invalid-input-response": "The response parameter is invalid or malformed.",
 }
 
+// The JSON structure that is returned by the verification API after a challenge response is verified.
+// @see https://developers.google.com/recaptcha/docs/verify#api-response
 type RecaptchaResponse struct {
 	Success    bool     `json:"success"`
 	Challenge  string   `json:"challenge_ts"`
@@ -47,10 +53,19 @@ type RecaptchaResponse struct {
 	ErrorCodes []string `json:"error-codes"`
 }
 
+// The Recaptcha main structure. Its only purpose is to verify the user's response to a challenge with Google.
+// You should initialize the structure with the Private Key that was supplied to you in the documentation.
 type Recaptcha struct {
 	PrivateKey string
 }
 
+// Verify the users's response to the reCAPTCHA challege with the API server.
+//
+// The parameter response is obtained after the user successfully solves the challenge presented by the JS widget. The
+// remoteip parameter is optional; just send it empty if you don't want to use it.
+//
+// This function will return a boolean that will have the final result returned by the API as well as an optional list
+// of errors. They might be useful for logging purposed but you don't have to show them to the user.
 func (r Recaptcha) Verify(response string, remoteip string) (bool, []error) {
 	params := url.Values{}
 
