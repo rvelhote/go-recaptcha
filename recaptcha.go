@@ -36,11 +36,11 @@ const siteVerifyURL = "https://www.google.com/recaptcha/api/siteverify"
 
 // RecaptchaErrorMap is the list of error codes mapped to a human-readable error code.
 // @see https://developers.google.com/recaptcha/docs/verify#error-code-reference
-var RecaptchaErrorMap = map[string]string{
-	"missing-input-secret":   "The secret parameter is missing.",
-	"invalid-input-secret":   "The secret parameter is invalid or malformed.",
-	"missing-input-response": "The response parameter is missing.",
-	"invalid-input-response": "The response parameter is invalid or malformed.",
+var RecaptchaErrorMap = map[string]error{
+	"missing-input-secret":   errors.New("The secret parameter is missing."),
+	"invalid-input-secret":   errors.New("The secret parameter is invalid or malformed."),
+	"missing-input-response": errors.New("The response parameter is missing."),
+	"invalid-input-response": errors.New("The response parameter is invalid or malformed."),
 }
 
 // Response is the JSON structure that is returned by the verification API after a challenge response is verified.
@@ -85,14 +85,14 @@ func (r Recaptcha) Verify(response string, remoteip string) (bool, []error) {
 	httpClient := &http.Client{Timeout: 10 * time.Second}
 	httpResponse, _ := httpClient.PostForm(siteVerifyURL, params)
 
-    defer httpResponse.Body.Close()
+	defer httpResponse.Body.Close()
 
 	bufferedReader := bufio.NewReader(httpResponse.Body)
 	json.NewDecoder(bufferedReader).Decode(&jsonResponse)
 
 	apiErrors := make([]error, len(jsonResponse.ErrorCodes))
 	for i, singleError := range jsonResponse.ErrorCodes {
-		apiErrors[i] = errors.New(RecaptchaErrorMap[singleError])
+		apiErrors[i] = RecaptchaErrorMap[singleError]
 	}
 
 	return jsonResponse.Success, apiErrors

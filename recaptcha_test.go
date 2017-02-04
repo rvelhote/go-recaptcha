@@ -56,8 +56,8 @@ func TestRecaptcha_VerifyEmptyResponseParameter(t *testing.T) {
 		t.Error("Should only have a single error!")
 	}
 
-	if len(errors) == 1 && errors[0].Error() != RecaptchaErrorMap["missing-input-response"] {
-		t.Errorf("The error should have been -- %s -- and it was -- %s --", RecaptchaErrorMap["missing-input-response"], errors[0].Error())
+	if len(errors) == 1 && errors[0] != RecaptchaErrorMap["missing-input-response"] {
+		t.Errorf("The error should have been -- %s -- and it was -- %s --", RecaptchaErrorMap["missing-input-response"], errors[0])
 	}
 }
 
@@ -74,8 +74,8 @@ func TestRecaptcha_VerifyMalformedResponseParameter(t *testing.T) {
 		t.Error("Should only have a single error!")
 	}
 
-	if len(errors) == 1 && errors[0].Error() != RecaptchaErrorMap["invalid-input-response"] {
-		t.Errorf("The error should have been -- %s -- and it was -- %s --", RecaptchaErrorMap["invalid-input-response"], errors[0].Error())
+	if len(errors) == 1 && errors[0] != RecaptchaErrorMap["invalid-input-response"] {
+		t.Errorf("The error should have been -- %s -- and it was -- %s --", RecaptchaErrorMap["invalid-input-response"].Error(), errors[0].Error())
 	}
 }
 
@@ -92,8 +92,8 @@ func TestRecaptcha_VerifyInvalidSecretParameter(t *testing.T) {
 		t.Error("Should only have a single error!")
 	}
 
-	if len(errors) == 1 && errors[0].Error() != RecaptchaErrorMap["missing-input-secret"] {
-		t.Errorf("The error should have been -- %s -- and it was -- %s --", RecaptchaErrorMap["missing-input-secret"], errors[0].Error())
+	if len(errors) == 1 && errors[0] != RecaptchaErrorMap["missing-input-secret"] {
+		t.Errorf("The error should have been -- %s -- and it was -- %s --", RecaptchaErrorMap["missing-input-secret"].Error(), errors[0].Error())
 	}
 }
 
@@ -110,8 +110,8 @@ func TestRecaptcha_VerifyMalformedSecretParameter(t *testing.T) {
 		t.Error("Should only have a single error!")
 	}
 
-	if len(errors) == 1 && errors[0].Error() != RecaptchaErrorMap["invalid-input-secret"] {
-		t.Errorf("The error should have been -- %s -- and it was -- %s --", RecaptchaErrorMap["invalid-input-secret"], errors[0].Error())
+	if len(errors) == 1 && errors[0] != RecaptchaErrorMap["invalid-input-secret"] {
+		t.Errorf("The error should have been -- %s -- and it was -- %s --", RecaptchaErrorMap["invalid-input-secret"].Error(), errors[0])
 	}
 }
 
@@ -128,11 +128,11 @@ func TestRecaptcha_VerifyMultipleErrors(t *testing.T) {
 	}
 
 	if len(errors) == 2 {
-		if errors[0].Error() != RecaptchaErrorMap["invalid-input-response"] {
-			t.Errorf("The first error should have been -- %s -- and it was -- %s --", RecaptchaErrorMap["invalid-input-response"], errors[0].Error())
+		if errors[0] != RecaptchaErrorMap["invalid-input-response"] {
+			t.Errorf("The first error should have been -- %s -- and it was -- %s --", RecaptchaErrorMap["invalid-input-response"], errors[0])
 		}
-		if errors[1].Error() != RecaptchaErrorMap["invalid-input-secret"] {
-			t.Errorf("The second error should have been -- %s -- and it was -- %s --", RecaptchaErrorMap["invalid-input-secret"], errors[1].Error())
+		if errors[1] != RecaptchaErrorMap["invalid-input-secret"] {
+			t.Errorf("The second error should have been -- %s -- and it was -- %s --", RecaptchaErrorMap["invalid-input-secret"], errors[1])
 		}
 	}
 }
