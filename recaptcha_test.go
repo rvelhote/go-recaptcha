@@ -22,7 +22,7 @@
 package recaptcha
 
 import (
-    "testing"
+	"testing"
 )
 
 const TestPrivateKey = "6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe"
@@ -32,108 +32,108 @@ const TestRemoteIp = "127.0.0.1"
 // This test will use the reCAPTCHA test private and site keys to make a successfull request to the verification API.
 // These keys can be found at https://developers.google.com/recaptcha/docs/faq
 func TestRecaptcha_Verify(t *testing.T) {
-    recaptcha := Recaptcha{ PrivateKey: TestPrivateKey }
-    success, errors := recaptcha.Verify(TestResponse, TestRemoteIp)
+	recaptcha := Recaptcha{PrivateKey: TestPrivateKey}
+	success, errors := recaptcha.Verify(TestResponse, TestRemoteIp)
 
-    if success != true {
-        t.Error("The test should have succeeded because the test data always succeeds.")
-    }
+	if success != true {
+		t.Error("The test should have succeeded because the test data always succeeds.")
+	}
 
-    if len(errors) != 0 {
-        t.Errorf("There should be no errors but there were -- %d -- errors!", len(errors))
-    }
+	if len(errors) != 0 {
+		t.Errorf("There should be no errors but there were -- %d -- errors!", len(errors))
+	}
 }
 
 // This test will send an empty challenge value. The API should reply with the correct error message.
 func TestRecaptcha_VerifyEmptyResponseParameter(t *testing.T) {
-    recaptcha := Recaptcha{ PrivateKey: TestPrivateKey }
-    success, errors := recaptcha.Verify("", TestRemoteIp)
+	recaptcha := Recaptcha{PrivateKey: TestPrivateKey}
+	success, errors := recaptcha.Verify("", TestRemoteIp)
 
-    if success != false {
-        t.Error("The API response for this test should have been a failure!")
-    }
+	if success != false {
+		t.Error("The API response for this test should have been a failure!")
+	}
 
-    if len(errors) != 1 {
-        t.Error("Should only have a single error!")
-    }
+	if len(errors) != 1 {
+		t.Error("Should only have a single error!")
+	}
 
-    if len(errors) == 1 && errors[0].Error() != RecaptchaErrorMap["missing-input-response"] {
-        t.Errorf("The error should have been -- %s -- and it was -- %s --", RecaptchaErrorMap["missing-input-response"], errors[0].Error())
-    }
+	if len(errors) == 1 && errors[0].Error() != RecaptchaErrorMap["missing-input-response"] {
+		t.Errorf("The error should have been -- %s -- and it was -- %s --", RecaptchaErrorMap["missing-input-response"], errors[0].Error())
+	}
 }
 
 // This test will send an invalid/malformed challenge value. The API should reply with the correct error message.
 func TestRecaptcha_VerifyMalformedResponseParameter(t *testing.T) {
-    recaptcha := Recaptcha{ PrivateKey: TestPrivateKey }
-    success, errors := recaptcha.Verify("This is a MALFORMED KEY", TestRemoteIp)
+	recaptcha := Recaptcha{PrivateKey: TestPrivateKey}
+	success, errors := recaptcha.Verify("This is a MALFORMED KEY", TestRemoteIp)
 
-    if success != false {
-        t.Error("The API response for this test should have been a failure!")
-    }
+	if success != false {
+		t.Error("The API response for this test should have been a failure!")
+	}
 
-    if len(errors) != 1 {
-        t.Error("Should only have a single error!")
-    }
+	if len(errors) != 1 {
+		t.Error("Should only have a single error!")
+	}
 
-    if len(errors) == 1 && errors[0].Error() != RecaptchaErrorMap["invalid-input-response"] {
-        t.Errorf("The error should have been -- %s -- and it was -- %s --", RecaptchaErrorMap["invalid-input-response"], errors[0].Error())
-    }
+	if len(errors) == 1 && errors[0].Error() != RecaptchaErrorMap["invalid-input-response"] {
+		t.Errorf("The error should have been -- %s -- and it was -- %s --", RecaptchaErrorMap["invalid-input-response"], errors[0].Error())
+	}
 }
 
 // This test will send an empty private key value. The API should reply with the correct error message.
 func TestRecaptcha_VerifyInvalidSecretParameter(t *testing.T) {
-    recaptcha := Recaptcha{ PrivateKey: "" }
-    success, errors := recaptcha.Verify(TestResponse, TestRemoteIp)
+	recaptcha := Recaptcha{PrivateKey: ""}
+	success, errors := recaptcha.Verify(TestResponse, TestRemoteIp)
 
-    if success != false {
-        t.Error("The API response for this test should have been a failure!")
-    }
+	if success != false {
+		t.Error("The API response for this test should have been a failure!")
+	}
 
-    if len(errors) != 1 {
-        t.Error("Should only have a single error!")
-    }
+	if len(errors) != 1 {
+		t.Error("Should only have a single error!")
+	}
 
-    if len(errors) == 1 && errors[0].Error() != RecaptchaErrorMap["missing-input-secret"] {
-        t.Errorf("The error should have been -- %s -- and it was -- %s --", RecaptchaErrorMap["missing-input-secret"], errors[0].Error())
-    }
+	if len(errors) == 1 && errors[0].Error() != RecaptchaErrorMap["missing-input-secret"] {
+		t.Errorf("The error should have been -- %s -- and it was -- %s --", RecaptchaErrorMap["missing-input-secret"], errors[0].Error())
+	}
 }
 
 // This test will send a malformed private key value. The API should reply with the correct error message.
 func TestRecaptcha_VerifyMalformedSecretParameter(t *testing.T) {
-    recaptcha := Recaptcha{ PrivateKey: "This is a MALFORMED PRIVATE KEY" }
-    success, errors := recaptcha.Verify(TestResponse, TestRemoteIp)
+	recaptcha := Recaptcha{PrivateKey: "This is a MALFORMED PRIVATE KEY"}
+	success, errors := recaptcha.Verify(TestResponse, TestRemoteIp)
 
-    if success != false {
-        t.Error("The API response for this test should have been a failure!")
-    }
+	if success != false {
+		t.Error("The API response for this test should have been a failure!")
+	}
 
-    if len(errors) != 1 {
-        t.Error("Should only have a single error!")
-    }
+	if len(errors) != 1 {
+		t.Error("Should only have a single error!")
+	}
 
-    if len(errors) == 1 && errors[0].Error() != RecaptchaErrorMap["invalid-input-secret"] {
-        t.Errorf("The error should have been -- %s -- and it was -- %s --", RecaptchaErrorMap["invalid-input-secret"], errors[0].Error())
-    }
+	if len(errors) == 1 && errors[0].Error() != RecaptchaErrorMap["invalid-input-secret"] {
+		t.Errorf("The error should have been -- %s -- and it was -- %s --", RecaptchaErrorMap["invalid-input-secret"], errors[0].Error())
+	}
 }
 
 func TestRecaptcha_VerifyMultipleErrors(t *testing.T) {
-    recaptcha := Recaptcha{ PrivateKey: "This is a MALFORMED PRIVATE KEY" }
-    success, errors := recaptcha.Verify("This is a MALFORMED RESPONSE", TestRemoteIp)
+	recaptcha := Recaptcha{PrivateKey: "This is a MALFORMED PRIVATE KEY"}
+	success, errors := recaptcha.Verify("This is a MALFORMED RESPONSE", TestRemoteIp)
 
-    if success != false {
-        t.Error("The API response for this test should have been a failure!")
-    }
+	if success != false {
+		t.Error("The API response for this test should have been a failure!")
+	}
 
-    if len(errors) != 2 {
-        t.Error("There should be exactly two errors!")
-    }
+	if len(errors) != 2 {
+		t.Error("There should be exactly two errors!")
+	}
 
-    if len(errors) == 2 {
-        if(errors[0].Error() != RecaptchaErrorMap["invalid-input-response"]) {
-            t.Errorf("The first error should have been -- %s -- and it was -- %s --", RecaptchaErrorMap["invalid-input-response"], errors[0].Error())
-        }
-        if(errors[1].Error() != RecaptchaErrorMap["invalid-input-secret"]) {
-            t.Errorf("The second error should have been -- %s -- and it was -- %s --", RecaptchaErrorMap["invalid-input-secret"], errors[1].Error())
-        }
-    }
+	if len(errors) == 2 {
+		if errors[0].Error() != RecaptchaErrorMap["invalid-input-response"] {
+			t.Errorf("The first error should have been -- %s -- and it was -- %s --", RecaptchaErrorMap["invalid-input-response"], errors[0].Error())
+		}
+		if errors[1].Error() != RecaptchaErrorMap["invalid-input-secret"] {
+			t.Errorf("The second error should have been -- %s -- and it was -- %s --", RecaptchaErrorMap["invalid-input-secret"], errors[1].Error())
+		}
+	}
 }

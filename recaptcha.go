@@ -54,13 +54,13 @@ type Recaptcha struct {
 func (r Recaptcha) Verify(response string, remoteip string) (bool, []error) {
 	params := url.Values{}
 
-    if len(r.PrivateKey) > 0 {
-        params.Set("secret", r.PrivateKey)
-    }
+	if len(r.PrivateKey) > 0 {
+		params.Set("secret", r.PrivateKey)
+	}
 
-    if len(response) > 0 {
-        params.Set("response", response)
-    }
+	if len(response) > 0 {
+		params.Set("response", response)
+	}
 
 	if net.ParseIP(remoteip) != nil {
 		params.Set("remoteip", remoteip)
