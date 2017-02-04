@@ -48,8 +48,14 @@ var RecaptchaErrorMap = map[string]error{
 // @see https://developers.google.com/recaptcha/docs/verify#api-response
 type Response struct {
 	Success    bool     `json:"success"`
-	Challenge  string   `json:"challenge_ts"`
-	Hostname   string   `json:"hostname"`
+
+    // Timestamp of the challenge load (ISO format yyyy-MM-dd'T'HH:mm:ssZZ)
+    Challenge  string   `json:"challenge_ts"`
+
+    // The hostname of the site where the reCAPTCHA was solved
+    Hostname   string   `json:"hostname"`
+
+    // Optional list of error codes returned by the service
 	ErrorCodes []string `json:"error-codes"`
 }
 

@@ -22,10 +22,12 @@ Here is an example of how to use this package in a web application. Please note 
 ```
 func verify(w http.ResponseWriter, req *http.Request) {
 	req.ParseForm()
+	
 	challenge := req.PostFormValue("g-recaptcha-response")
+	ip, _, _ := net.SplitHostPort(req.RemoteAddr)
 
 	instance := recaptcha.Recaptcha{ PrivateKey: "6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe" }
-	response, err := instance.Verify(challenge, req.RemoteAddr)
+	response, err := instance.Verify(challenge, ip)
 
 	log.Println(response.Success)
 	log.Println(response.Challenge)
@@ -36,6 +38,9 @@ func verify(w http.ResponseWriter, req *http.Request) {
 ```
 
 The `Verify` function that is part of the package will return a `boolean` with the end-result and a list of errors, if any, that might have occurred during the processing.
+
+## Remote IP
+In the example before I simply used the `RemoteAddr` from the request object. I believe it's not within the scope of this package to handle that so be advised that this is not the most complete/best way to get an IP Address if your application is behind a proxy or a load balancer. For a more complete verification you should also check `X-Forwarded-For` and/or `X-Real-IP`. There is also a `Forwarded` HTTP header specified in [RFC-7239](https://tools.ietf.org/html/rfc7239) however I'm not sure if it's widely used.
 
 ## Contributing
 Contributions, suggestions and requests are welcome via Issue Tracker and via Pull Requests. I will do my best to reply and discuss.
