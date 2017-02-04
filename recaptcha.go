@@ -31,11 +31,11 @@ import (
 	"time"
 )
 
-// The URL that's used to verify the user's response to the challenge.
+// siteVerifyURL is The URL that's used to verify the user's response to the challenge.
 // @see https://developers.google.com/recaptcha/docs/verify#api-request
-const VerifyURL = "https://www.google.com/recaptcha/api/siteverify"
+const siteVerifyURL = "https://www.google.com/recaptcha/api/siteverify"
 
-// The list of error codes mapped to a human-readable error code.
+// RecaptchaErrorMap is the list of error codes mapped to a human-readable error code.
 // @see https://developers.google.com/recaptcha/docs/verify#error-code-reference
 var RecaptchaErrorMap = map[string]string{
 	"missing-input-secret":   "The secret parameter is missing.",
@@ -44,9 +44,9 @@ var RecaptchaErrorMap = map[string]string{
 	"invalid-input-response": "The response parameter is invalid or malformed.",
 }
 
-// The JSON structure that is returned by the verification API after a challenge response is verified.
+// Response is the JSON structure that is returned by the verification API after a challenge response is verified.
 // @see https://developers.google.com/recaptcha/docs/verify#api-response
-type RecaptchaResponse struct {
+type Response struct {
 	Success    bool     `json:"success"`
 	Challenge  string   `json:"challenge_ts"`
 	Hostname   string   `json:"hostname"`
@@ -81,10 +81,10 @@ func (r Recaptcha) Verify(response string, remoteip string) (bool, []error) {
 		params.Set("remoteip", remoteip)
 	}
 
-	jsonResponse := RecaptchaResponse{}
+	jsonResponse := Response{}
 
 	httpClient := &http.Client{Timeout: 10 * time.Second}
-	httpResponse, _ := httpClient.PostForm(VerifyURL, params)
+	httpResponse, _ := httpClient.PostForm(siteVerifyURL, params)
 
 	bufferedReader := bufio.NewReader(httpResponse.Body)
 	json.NewDecoder(bufferedReader).Decode(&jsonResponse)
