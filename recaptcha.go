@@ -67,7 +67,7 @@ type Recaptcha struct {
 //
 // This function will return a boolean that will have the final result returned by the API as well as an optional list
 // of errors. They might be useful for logging purposed but you don't have to show them to the user.
-func (r Recaptcha) Verify(response string, remoteip string) (bool, []error) {
+func (r Recaptcha) Verify(response string, remoteip string) (Response, []error) {
 	verificationURL := defaultVerificationURL
 	if len(r.URL) != 0 {
 		verificationURL = r.URL
@@ -87,21 +87,21 @@ func (r Recaptcha) Verify(response string, remoteip string) (bool, []error) {
 		params.Set("remoteip", remoteip)
 	}
 
-	jsonResponse := Response{}
+	jsonResponse := Response{ Success: false }
 
 	httpClient := &http.Client{Timeout: 10 * time.Second}
 	httpResponse, httpError := httpClient.PostForm(verificationURL, params)
 
 	if httpError != nil {
 		apiErrors := []error{httpError}
-		return false, apiErrors
+		return jsonResponse, apiErrors
 	}
 
 	defer httpResponse.Body.Close()
 
 	if httpResponse.StatusCode != 200 {
 		apiErrors := []error{errors.New(httpResponse.Status)}
-		return false, apiErrors
+		return jsonResponse, apiErrors
 	}
 
 	bufferedReader := bufio.NewReader(httpResponse.Body)
@@ -114,5 +114,5 @@ func (r Recaptcha) Verify(response string, remoteip string) (bool, []error) {
 		}
 	}
 
-	return jsonResponse.Success, apiErrors
+	return jsonResponse, apiErrors
 }
