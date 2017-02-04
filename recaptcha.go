@@ -1,4 +1,4 @@
-// Package recaptcha
+// Package recaptcha allows you to intereact with the Google reCAPTCHA API to verify users.
 // The MIT License (MIT)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
