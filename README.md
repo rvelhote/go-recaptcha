@@ -25,9 +25,12 @@ func verify(w http.ResponseWriter, req *http.Request) {
 	challenge := req.PostFormValue("g-recaptcha-response")
 
 	instance := recaptcha.Recaptcha{ PrivateKey: "6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe" }
-	success, err := instance.Verify(challenge, req.RemoteAddr)
+	response, err := instance.Verify(challenge, req.RemoteAddr)
 
-	log.Println(success)
+	log.Println(response.Success)
+	log.Println(response.Challenge)
+	log.Println(response.Hostname)
+	log.Println(response.ErrorCodes)
 	log.Println(err)
 }
 ```
