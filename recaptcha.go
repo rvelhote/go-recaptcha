@@ -31,7 +31,7 @@ import (
 	"time"
 )
 
-const VerifyUrl = "https://www.google.com/recaptcha/api/siteverify"
+const VerifyURL = "https://www.google.com/recaptcha/api/siteverify"
 
 var RecaptchaErrorMap = map[string]string{
 	"missing-input-secret":   "The secret parameter is missing.",
@@ -69,7 +69,7 @@ func (r Recaptcha) Verify(response string, remoteip string) (bool, []error) {
 	jsonResponse := RecaptchaResponse{}
 
 	httpClient := &http.Client{Timeout: 10 * time.Second}
-	httpResponse, _ := httpClient.PostForm(VerifyUrl, params)
+	httpResponse, _ := httpClient.PostForm(VerifyURL, params)
 
 	bufferedReader := bufio.NewReader(httpResponse.Body)
 	json.NewDecoder(bufferedReader).Decode(&jsonResponse)
