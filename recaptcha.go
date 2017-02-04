@@ -30,9 +30,9 @@ import (
 	"time"
 )
 
-// siteVerifyURL is The URL that's used to verify the user's response to the challenge.
+// defaultVerificationURL is The default URL that's used to verify the user's response to the challenge.
 // @see https://developers.google.com/recaptcha/docs/verify#api-request
-const siteVerifyURL = "https://www.google.com/recaptcha/api/siteverify"
+const defaultVerificationURL = "https://www.google.com/recaptcha/api/siteverify"
 
 // RecaptchaErrorMap is the list of error codes mapped to a human-readable error code.
 // @see https://developers.google.com/recaptcha/docs/verify#error-code-reference
@@ -56,6 +56,7 @@ type Response struct {
 // You should initialize the structure with the Private Key that was supplied to you in the documentation.
 type Recaptcha struct {
 	PrivateKey string
+    URL string
 }
 
 // Verify the users's response to the reCAPTCHA challege with the API server.
@@ -66,6 +67,11 @@ type Recaptcha struct {
 // This function will return a boolean that will have the final result returned by the API as well as an optional list
 // of errors. They might be useful for logging purposed but you don't have to show them to the user.
 func (r Recaptcha) Verify(response string, remoteip string) (bool, []error) {
+    verificationURL := defaultVerificationURL
+    if len(r.URL) != 0 {
+        verificationURL = r.URL
+    }
+
 	params := url.Values{}
 
 	if len(r.PrivateKey) > 0 {
@@ -83,9 +89,19 @@ func (r Recaptcha) Verify(response string, remoteip string) (bool, []error) {
 	jsonResponse := Response{}
 
 	httpClient := &http.Client{Timeout: 10 * time.Second}
-	httpResponse, _ := httpClient.PostForm(siteVerifyURL, params)
+	httpResponse, httpError := httpClient.PostForm(verificationURL, params)
 
-	defer httpResponse.Body.Close()
+    if httpError != nil {
+        apiErrors := []error{httpError}
+        return false, apiErrors
+    }
+
+    defer httpResponse.Body.Close()
+
+    if httpResponse.StatusCode != 200 {
+        apiErrors := []error{errors.New(httpResponse.Status)}
+        return false, apiErrors
+    }
 
 	bufferedReader := bufio.NewReader(httpResponse.Body)
 	json.NewDecoder(bufferedReader).Decode(&jsonResponse)

@@ -136,3 +136,29 @@ func TestRecaptcha_VerifyMultipleErrors(t *testing.T) {
 		}
 	}
 }
+
+func TestRecaptcha_VerifyHttpStatusError(t *testing.T) {
+    recaptcha := Recaptcha{URL: "https://www.google.com/recaptcha/api/siteverify-404404"}
+    success, errors := recaptcha.Verify("", "")
+
+    if success != false {
+        t.Error("The verification response for this test should have been a failure!")
+    }
+
+    if len(errors) != 1 {
+        t.Errorf("The verification function should have returned one error. It returned %d. With the content -- %s", len(errors), errors)
+    }
+}
+
+func TestRecaptcha_VerifyHttpError(t *testing.T) {
+    recaptcha := Recaptcha{URL: "https://this-domain-does-not-exist-www.google.com/recaptcha/api/siteverify"}
+    success, errors := recaptcha.Verify("", "")
+
+    if success != false {
+        t.Error("The verification response for this test should have been a failure!")
+    }
+
+    if len(errors) != 1 {
+        t.Errorf("The verification function should have returned one error. It returned %d. With the content -- %s", len(errors), errors)
+    }
+}
