@@ -22,7 +22,6 @@
 package recaptcha
 
 import (
-	"bufio"
 	"encoding/json"
 	"errors"
 	"net"
@@ -110,8 +109,7 @@ func (r Recaptcha) Verify(response string, remoteip string) (Response, []error) 
 		return jsonResponse, apiErrors
 	}
 
-	bufferedReader := bufio.NewReader(httpResponse.Body)
-	json.NewDecoder(bufferedReader).Decode(&jsonResponse)
+	json.NewDecoder(httpResponse.Body).Decode(&jsonResponse)
 
 	apiErrors := make([]error, len(jsonResponse.ErrorCodes))
 	for i, singleError := range jsonResponse.ErrorCodes {
