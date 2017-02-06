@@ -98,15 +98,13 @@ func (r Recaptcha) Verify(response string, remoteip string) (Response, []error) 
 	httpResponse, httpError := httpClient.PostForm(verificationURL, params)
 
 	if httpError != nil {
-		apiErrors := []error{httpError}
-		return jsonResponse, apiErrors
+		return jsonResponse, []error{httpError}
 	}
 
 	defer httpResponse.Body.Close()
 
 	if httpResponse.StatusCode != 200 {
-		apiErrors := []error{errors.New(httpResponse.Status)}
-		return jsonResponse, apiErrors
+		return jsonResponse, []error{errors.New(httpResponse.Status)}
 	}
 
 	json.NewDecoder(httpResponse.Body).Decode(&jsonResponse)
