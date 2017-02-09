@@ -46,15 +46,15 @@ var RecaptchaErrorMap = map[string]error{
 // Response is the JSON structure that is returned by the verification API after a challenge response is verified.
 // @see https://developers.google.com/recaptcha/docs/verify#api-response
 type Response struct {
-	Success    bool     `json:"success"`
+	Success bool `json:"success"`
 
-    // Timestamp of the challenge load (ISO format yyyy-MM-dd'T'HH:mm:ssZZ)
-    Challenge  string   `json:"challenge_ts"`
+	// Timestamp of the challenge load (ISO format yyyy-MM-dd'T'HH:mm:ssZZ)
+	Challenge string `json:"challenge_ts"`
 
-    // The hostname of the site where the reCAPTCHA was solved
-    Hostname   string   `json:"hostname"`
+	// The hostname of the site where the reCAPTCHA was solved
+	Hostname string `json:"hostname"`
 
-    // Optional list of error codes returned by the service
+	// Optional list of error codes returned by the service
 	ErrorCodes []string `json:"error-codes"`
 }
 
@@ -92,7 +92,7 @@ func (r Recaptcha) Verify(response string, remoteip string) (Response, []error) 
 		params.Set("remoteip", remoteip)
 	}
 
-	jsonResponse := Response{ Success: false }
+	jsonResponse := Response{Success: false}
 
 	httpClient := &http.Client{Timeout: 10 * time.Second}
 	httpResponse, httpError := httpClient.PostForm(verificationURL, params)
