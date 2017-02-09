@@ -65,7 +65,7 @@ type Recaptcha struct {
 	URL        string
 }
 
-// Verify the users's response to the reCAPTCHA challege with the API server.
+// Verify the users's response to the reCAPTCHA challenge with the API server.
 //
 // The parameter response is obtained after the user successfully solves the challenge presented by the JS widget. The
 // remoteip parameter is optional; just send it empty if you don't want to use it.
