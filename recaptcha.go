@@ -37,10 +37,10 @@ const defaultVerificationURL = "https://www.google.com/recaptcha/api/siteverify"
 // RecaptchaErrorMap is the list of error codes mapped to a human-readable error code.
 // @see https://developers.google.com/recaptcha/docs/verify#error-code-reference
 var RecaptchaErrorMap = map[string]error{
-	"missing-input-secret":   errors.New("The secret parameter is missing."),
-	"invalid-input-secret":   errors.New("The secret parameter is invalid or malformed."),
-	"missing-input-response": errors.New("The response parameter is missing."),
-	"invalid-input-response": errors.New("The response parameter is invalid or malformed."),
+	"missing-input-secret":   errors.New("The secret parameter is missing"),
+	"invalid-input-secret":   errors.New("The secret parameter is invalid or malformed"),
+	"missing-input-response": errors.New("The response parameter is missing"),
+	"invalid-input-response": errors.New("The response parameter is invalid or malformed"),
 }
 
 // Response is the JSON structure that is returned by the verification API after a challenge response is verified.
