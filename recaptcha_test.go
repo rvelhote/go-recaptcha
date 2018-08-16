@@ -23,6 +23,7 @@ package recaptcha
  * SOFTWARE.
  */
 import (
+	"context"
 	"testing"
 )
 
@@ -34,7 +35,7 @@ const TestRemoteIP = "127.0.0.1"
 // These keys can be found at https://developers.google.com/recaptcha/docs/faq
 func TestRecaptcha_Verify(t *testing.T) {
 	recaptcha := Recaptcha{PrivateKey: TestPrivateKey}
-	response, errors := recaptcha.Verify(TestResponse, TestRemoteIP)
+	response, errors := recaptcha.Verify(context.Background(), TestResponse, TestRemoteIP)
 
 	if response.Success != true {
 		t.Error("The test should have succeeded because the test data always succeeds.")
@@ -48,14 +49,14 @@ func TestRecaptcha_Verify(t *testing.T) {
 // This test will send an empty challenge value. The API should reply with the correct error message.
 func TestRecaptcha_VerifyEmptyResponseParameter(t *testing.T) {
 	recaptcha := Recaptcha{PrivateKey: TestPrivateKey}
-	response, errors := recaptcha.Verify("", TestRemoteIP)
+	response, errors := recaptcha.Verify(context.Background(), "", TestRemoteIP)
 
 	if response.Success != false {
 		t.Error("The API response for this test should have been a failure!")
 	}
 
 	if len(errors) != 1 {
-		t.Error("Should only have a single error!")
+		t.Errorf("Should only have a single error, but got: %v", errors)
 	}
 
 	if len(errors) == 1 && errors[0] != RecaptchaErrorMap["missing-input-response"] {
@@ -66,7 +67,7 @@ func TestRecaptcha_VerifyEmptyResponseParameter(t *testing.T) {
 // This test will send an invalid/malformed challenge value. The API should reply with the correct error message.
 func TestRecaptcha_VerifyMalformedResponseParameter(t *testing.T) {
 	recaptcha := Recaptcha{PrivateKey: TestPrivateKey}
-	response, errors := recaptcha.Verify("This is a MALFORMED KEY", TestRemoteIP)
+	response, errors := recaptcha.Verify(context.Background(), "This is a MALFORMED KEY", TestRemoteIP)
 
 	if response.Success != false {
 		t.Error("The API response for this test should have been a failure!")
@@ -84,7 +85,7 @@ func TestRecaptcha_VerifyMalformedResponseParameter(t *testing.T) {
 // This test will send an empty private key value. The API should reply with the correct error message.
 func TestRecaptcha_VerifyInvalidSecretParameter(t *testing.T) {
 	recaptcha := Recaptcha{PrivateKey: ""}
-	response, errors := recaptcha.Verify(TestResponse, TestRemoteIP)
+	response, errors := recaptcha.Verify(context.Background(), TestResponse, TestRemoteIP)
 
 	if response.Success != false {
 		t.Error("The API response for this test should have been a failure!")
@@ -102,7 +103,7 @@ func TestRecaptcha_VerifyInvalidSecretParameter(t *testing.T) {
 // This test will send a malformed private key value. The API should reply with the correct error message.
 func TestRecaptcha_VerifyMalformedSecretParameter(t *testing.T) {
 	recaptcha := Recaptcha{PrivateKey: "This is a MALFORMED PRIVATE KEY"}
-	response, errors := recaptcha.Verify(TestResponse, TestRemoteIP)
+	response, errors := recaptcha.Verify(context.Background(), TestResponse, TestRemoteIP)
 
 	if response.Success != false {
 		t.Error("The API response for this test should have been a failure!")
@@ -119,7 +120,7 @@ func TestRecaptcha_VerifyMalformedSecretParameter(t *testing.T) {
 
 func TestRecaptcha_VerifyMultipleErrors(t *testing.T) {
 	recaptcha := Recaptcha{PrivateKey: "This is a MALFORMED PRIVATE KEY"}
-	response, errors := recaptcha.Verify("This is a MALFORMED RESPONSE", TestRemoteIP)
+	response, errors := recaptcha.Verify(context.Background(), "This is a MALFORMED RESPONSE", TestRemoteIP)
 
 	if response.Success != false {
 		t.Error("The API response for this test should have been a failure!")
@@ -141,7 +142,7 @@ func TestRecaptcha_VerifyMultipleErrors(t *testing.T) {
 
 func TestRecaptcha_VerifyHttpStatusError(t *testing.T) {
 	recaptcha := Recaptcha{URL: "https://www.google.com/recaptcha/api/siteverify-404404"}
-	response, errors := recaptcha.Verify("", "")
+	response, errors := recaptcha.Verify(context.Background(), "", "")
 
 	if response.Success != false {
 		t.Error("The verification response for this test should have been a failure!")
@@ -154,7 +155,7 @@ func TestRecaptcha_VerifyHttpStatusError(t *testing.T) {
 
 func TestRecaptcha_VerifyHttpError(t *testing.T) {
 	recaptcha := Recaptcha{URL: "https://this-domain-does-not-exist-www.google.com/recaptcha/api/siteverify"}
-	response, errors := recaptcha.Verify("", "")
+	response, errors := recaptcha.Verify(context.Background(), "", "")
 
 	if response.Success != false {
 		t.Error("The verification response for this test should have been a failure!")

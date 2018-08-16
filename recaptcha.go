@@ -23,12 +23,13 @@ package recaptcha
  * SOFTWARE.
  */
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"net"
 	"net/http"
 	"net/url"
-	"time"
+	"strings"
 )
 
 // defaultVerificationURL is The default URL that's used to verify the user's response to the challenge.
@@ -64,6 +65,7 @@ type Response struct {
 type Recaptcha struct {
 	PrivateKey string
 	URL        string
+	HTTPClient *http.Client
 }
 
 // Verify the users's response to the reCAPTCHA challenge with the API server.
@@ -73,7 +75,7 @@ type Recaptcha struct {
 //
 // This function will return a boolean that will have the final result returned by the API as well as an optional list
 // of errors. They might be useful for logging purposed but you don't have to show them to the user.
-func (r Recaptcha) Verify(response string, remoteip string) (Response, []error) {
+func (r Recaptcha) Verify(ctx context.Context, response string, remoteip string) (Response, []error) {
 	verificationURL := defaultVerificationURL
 	if len(r.URL) != 0 {
 		verificationURL = r.URL
@@ -95,9 +97,18 @@ func (r Recaptcha) Verify(response string, remoteip string) (Response, []error) 
 
 	jsonResponse := Response{Success: false}
 
-	httpClient := &http.Client{Timeout: 10 * time.Second}
-	httpResponse, httpError := httpClient.PostForm(verificationURL, params)
+	if r.HTTPClient == nil {
+		r.HTTPClient = http.DefaultClient
+	}
 
+	req, err := http.NewRequest("POST", verificationURL, strings.NewReader(params.Encode()))
+	if err != nil {
+		return jsonResponse, []error{err}
+	}
+	req = req.WithContext(ctx)
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	httpResponse, httpError := r.HTTPClient.Do(req)
 	if httpError != nil {
 		return jsonResponse, []error{httpError}
 	}
